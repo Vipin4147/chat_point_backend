@@ -5,7 +5,7 @@ require("dotenv").config();
 const { createClient } = require("redis");
 
 const myredis = createClient({
-  url: "redis://default:u2Pl4XkTWzqr9N1XkOUzsKZ0qnsAxqwf@redis-14012.c264.ap-south-1-1.ec2.cloud.redislabs.com:14012",
+  url: process.env.REDIS_URL,
 });
 
 myredis.on("error", (err) => console.log("Redis Client Error", err));
@@ -23,13 +23,11 @@ const authenticate = async (req, res, next) => {
     if (token == red_token) {
       res.send("please login again");
     } else {
-      jwt.verify(token, process.env.JWT, (err, decoded) => {
-        if (decoded) {
-          next();
-        } else {
-          res.send("Please login first");
-        }
-      });
+      const user = jwt.verify(token, process.env.JWT);
+      const { userId } = user;
+
+      req.user = userId;
+      next();
     }
   }
 };
