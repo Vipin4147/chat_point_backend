@@ -45,6 +45,9 @@ let loggerTouse = (req, res, next) => {
 };
 
 app.use(loggerTouse);
+app.get("/", (req, res) => {
+  res.send("welcome user");
+});
 app.use("/admin", admin);
 app.use("/user", user);
 // const {admin} = require("./routes/admin");
